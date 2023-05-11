@@ -10,6 +10,9 @@ import 'package:html/parser.dart' as parser;
 import '../dataClass/trend.dart';
 
 
+
+
+
 class githubPage extends StatefulWidget{
   _githubPageState createState() => _githubPageState();
 }
@@ -31,7 +34,104 @@ class _githubPageState extends State<githubPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: AppBar(
+          backgroundColor: Color.fromARGB(255, 36, 41, 47),
+          // title: Text("ddddddddd"),
+          elevation: 0.0,
+        ),
+      ),
+
       body: Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 36, 41, 47),
+        ),
+
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Text("Github Trending", style: TextStyle(fontSize: 30, color:Colors.white),)
+                      
+                      ),
+                  ),
+                  Container(
+                    height: 100,
+                    child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(100, 35),
+                          backgroundColor: Color.fromARGB(255, 64, 73, 83),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20)
+                            )
+                          )
+                        ),
+                        child: Text("Today"),
+                        onPressed: (){},
+                      ),
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(100, 35),
+                          backgroundColor: Color.fromARGB(255, 246, 248, 250),
+                          foregroundColor: Color.fromARGB(255, 64, 73, 83),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20)
+                            )
+                          )
+                        ),
+                        child: Text("This week"),
+                        onPressed: (){},
+                      ),
+                      
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(100, 35),
+                          backgroundColor: Color.fromARGB(255, 64, 73, 83),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20)
+                            )
+                          )
+                        ),
+                        child: Text("This month"),
+                        onPressed: (){},
+                      )
+
+                    ],
+                  )
+                  )
+                  
+                  
+                ],
+              )  
+              
+              
+            ),
+            Expanded( 
+              child:
+            
+            Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 246, 248, 250),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+
         child: Center(
             child: trendData!.length == 0
                 ? Text("준비중")
@@ -41,18 +141,101 @@ class _githubPageState extends State<githubPage> {
                   child:  Card(
                     child: Column(
                       children: <Widget>[
+                        
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          height: 80,
 
-                        Text('${trendData![position].userName.toString()}'),
+                          width: 380,
 
-                        Text('${trendData![position].repoName.toString()}'),
+                          child: SingleChildScrollView(
+                            
+                            scrollDirection:Axis.horizontal,
+                            child: Row(
+                            children: [
+                              Container(
+                                padding:EdgeInsets.fromLTRB(10, 0, 30, 0),
+                                child: Text('${position+1}', style: TextStyle(fontSize: 18)),
+                              ),
+                              
 
-                        Text('${trendData![position].url.toString()}'),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 300,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text('${trendData![position].userName.toString()} / ${trendData![position].repoName.toString()}', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 36, 41, 47))),
+                                  ),),
 
-                        Text('${trendData![position].language.toString()}'),
+                                  Container(
+                                    width: 250,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.language,
+                                              size: 18,
+                                              color: Colors.grey
+                                            ),
+                                            Text('${trendData![position].language.toString()}', style: TextStyle(color: Colors.grey)),
+                                          ],
+                                        ),
 
-                        Text('${trendData![position].star.toString()}'),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star_border,
+                                              size: 18,
+                                              color: Colors.amber
+                                            ),
+                                            Text('${trendData![position].star.toString()}', style: TextStyle(color: Colors.grey),),
+                                          ],
+                                        ),
 
-                        Text('${trendData![position].fork.toString()}'),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.share_outlined,
+                                              size: 18,
+                                              color: Colors.blueAccent
+                                            ),
+                                            Text('${trendData![position].fork.toString()}', style: TextStyle(color: Colors.grey)),
+                                          ],
+                                        ),
+                                        
+
+
+                                    
+                                      ],
+                                    ),
+                                  )
+                                      
+                                  
+                                  
+
+
+                                ],
+                              ),
+
+                              
+                            ],
+                          ),
+
+                          )
+                        
+                          
+                        ),
+                        
+                        
+
+                        // Text('${trendData![position].url.toString()}'),
+
+                        
 
                       ],
                     ),
@@ -63,7 +246,12 @@ class _githubPageState extends State<githubPage> {
               itemCount: 20),
 
         ),
-      ),
+      ),)
+
+        ])
+      ) 
+      
+      
     );
   }
 
