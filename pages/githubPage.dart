@@ -6,14 +6,11 @@ import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:trend/pages/githubDetail.dart';
 
 import '../dataClass/trend.dart';
 
-
-
-
-
-class githubPage extends StatefulWidget{
+class githubPage extends StatefulWidget {
   _githubPageState createState() => _githubPageState();
 }
 
@@ -22,247 +19,224 @@ class _githubPageState extends State<githubPage> {
 
   List<Trend> trendData = [];
 
+  List<String> search_since = ['daily', 'weekly', 'monthly'];
+  List<String> show_since = ['Today', 'This week', 'This month'];
+  int select_since = 0;
+
   @override
   void initState() {
     super.initState();
 
     trendData = new List.empty(growable: true);
-
     getJSONData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: AppBar(
-          backgroundColor: Color.fromARGB(255, 36, 41, 47),
-          // title: Text("ddddddddd"),
-          elevation: 0.0,
-        ),
-      ),
-
-      body: Container(
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 36, 41, 47),
-        ),
-
-        child: Column(
-          children: [
-            Container(
-              height: 200,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text("Github Trending", style: TextStyle(fontSize: 30, color:Colors.white),)
-                      
-                      ),
-                  ),
-                  Container(
-                    height: 100,
-                    child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(100, 35),
-                          backgroundColor: Color.fromARGB(255, 64, 73, 83),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20)
-                            )
-                          )
-                        ),
-                        child: Text("Today"),
-                        onPressed: (){},
-                      ),
-
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(100, 35),
-                          backgroundColor: Color.fromARGB(255, 246, 248, 250),
-                          foregroundColor: Color.fromARGB(255, 64, 73, 83),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20)
-                            )
-                          )
-                        ),
-                        child: Text("This week"),
-                        onPressed: (){},
-                      ),
-                      
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(100, 35),
-                          backgroundColor: Color.fromARGB(255, 64, 73, 83),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20)
-                            )
-                          )
-                        ),
-                        child: Text("This month"),
-                        onPressed: (){},
-                      )
-
-                    ],
-                  )
-                  )
-                  
-                  
-                ],
-              )  
-              
-              
-            ),
-            Expanded( 
-              child:
-            
-            Container(
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 246, 248, 250),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: AppBar(
+            backgroundColor: Color.fromARGB(255, 36, 41, 47),
+            // title: Text("ddddddddd"),
+            elevation: 0.0,
           ),
         ),
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-
-        child: Center(
-            child: trendData!.length == 0
-                ? Text("준비중")
-                : ListView.builder(
-              itemBuilder: (context, position) {
-                return GestureDetector(
-                  child:  Card(
-                    child: Column(
-                      children: <Widget>[
-                        
-                        Container(
-                          padding: EdgeInsets.all(15),
-                          height: 80,
-
-                          width: 380,
-
-                          child: SingleChildScrollView(
-                            
-                            scrollDirection:Axis.horizontal,
-                            child: Row(
+        body: Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 36, 41, 47),
+            ),
+            child: Column(children: [
+              Container(
+                  height: 200,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Center(
+                            child: Text(
+                          "Github Trending",
+                          style: TextStyle(fontSize: 30, color: Colors.white),
+                        )),
+                      ),
+                      Container(
+                          height: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Container(
-                                padding:EdgeInsets.fromLTRB(10, 0, 30, 0),
-                                child: Text('${position+1}', style: TextStyle(fontSize: 18)),
-                              ),
-                              
+                              for (var i = 0; i < search_since.length; i++)
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(100, 50),
+                                      backgroundColor: (i == select_since)
+                                          ? Color.fromARGB(255, 246, 248, 250)
+                                          : Color.fromARGB(255, 64, 73, 83),
+                                      foregroundColor: (i == select_since)
+                                          ? Color.fromARGB(255, 64, 73, 83)
+                                          : Color.fromARGB(255, 246, 248, 250),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20)))),
+                                  child: Text('${show_since[i]!}'),
+                                  onPressed: () {
+                                    setState(() {
+                                      select_since = i;
 
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 300,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Text('${trendData![position].userName.toString()} / ${trendData![position].repoName.toString()}', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 36, 41, 47))),
-                                  ),),
-
-                                  Container(
-                                    width: 250,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.language,
-                                              size: 18,
-                                              color: Colors.grey
-                                            ),
-                                            Text('${trendData![position].language.toString()}', style: TextStyle(color: Colors.grey)),
-                                          ],
-                                        ),
-
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.star_border,
-                                              size: 18,
-                                              color: Colors.amber
-                                            ),
-                                            Text('${trendData![position].star.toString()}', style: TextStyle(color: Colors.grey),),
-                                          ],
-                                        ),
-
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.share_outlined,
-                                              size: 18,
-                                              color: Colors.blueAccent
-                                            ),
-                                            Text('${trendData![position].fork.toString()}', style: TextStyle(color: Colors.grey)),
-                                          ],
-                                        ),
-                                        
-
-
-                                    
-                                      ],
-                                    ),
-                                  )
-                                      
-                                  
-                                  
-
-
-                                ],
-                              ),
-
-                              
+                                      trendData =
+                                          new List.empty(growable: true);
+                                      getJSONData();
+                                    });
+                                  },
+                                ),
                             ],
-                          ),
-
-                          )
-                        
-                          
-                        ),
-                        
-                        
-
-                        // Text('${trendData![position].url.toString()}'),
-
-                        
-
-                      ],
+                          ))
+                    ],
+                  )),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 246, 248, 250),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
                   ),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Center(
+                    child: trendData!.length == 0
+                        ? Text("준비중")
+                        : ListView.builder(
+                            itemBuilder: (context, position) {
+                              return GestureDetector(
+                                child: Card(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                          padding: EdgeInsets.all(15),
+                                          height: 80,
+                                          width: 380,
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      10, 0, 30, 0),
+                                                  child: Text('${position + 1}',
+                                                      style: TextStyle(
+                                                          fontSize: 18)),
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width: 300,
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        child: Text(
+                                                            '${trendData![position].userName.toString()} / ${trendData![position].repoName.toString()}',
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        36,
+                                                                        41,
+                                                                        47))),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: 250,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .language,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .grey),
+                                                              Text(
+                                                                  '${trendData![position].language.toString()}',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .grey)),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .star_border,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .amber),
+                                                              Text(
+                                                                '${trendData![position].star.toString()}',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .grey),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .share_outlined,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .blueAccent),
+                                                              Text(
+                                                                  '${trendData![position].fork.toString()}',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .grey)),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          )),
 
-                );
-              },
-              itemCount: 20),
-
-        ),
-      ),)
-
-        ])
-      ) 
-      
-      
-    );
+                                      // Text('${trendData![position].url.toString()}'),
+                                    ],
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => githubDetail(
+                                              trend: trendData![position])));
+                                },
+                              );
+                            },
+                            itemCount: 20),
+                  ),
+                ),
+              )
+            ])));
   }
 
-
-
   Future<String> getJSONData() async {
-    var url = 'https://github.com/trending?since=monthly';
+    var url = 'https://github.com/trending?since=${search_since[select_since]}';
     var response = await http.get(Uri.parse(url));
 
     dom.Document document = parser.parse(response.body);
-
 
     List<String> userNameList = [];
     List<String> repoNameList = [];
@@ -271,60 +245,51 @@ class _githubPageState extends State<githubPage> {
     List<String> starList = [];
     List<String> forkList = [];
 
-
     // userName, repoName, url
     document
-      .getElementsByClassName('h3 lh-condensed')
-      .forEach((dom.Element element) {
+        .getElementsByClassName('h3 lh-condensed')
+        .forEach((dom.Element element) {
+      String userName_repoName = element.text.replaceAll(RegExp(r"\s+"), '');
 
-        String userName_repoName = element.text.replaceAll(RegExp(r"\s+"), '');
+      List<String> userName_repoName_list =
+          userName_repoName.split('/').toList();
 
-        List<String> userName_repoName_list = userName_repoName.split('/').toList();
+      userNameList.add(userName_repoName_list[0]);
+      repoNameList.add(userName_repoName_list[1]);
 
-        userNameList.add(userName_repoName_list[0]);
-        repoNameList.add(userName_repoName_list[1]);
-
-        urlList.add('https://github.com/'+ userName_repoName);
+      urlList.add('https://github.com/' + userName_repoName);
     });
 
     // language
     document
-      .getElementsByClassName('d-inline-block ml-0 mr-3')
-      .forEach((dom.Element element) {
-
-        languageList.add(element.text.replaceAll(RegExp(r"\s+"), ''));
+        .getElementsByClassName('d-inline-block ml-0 mr-3')
+        .forEach((dom.Element element) {
+      languageList.add(element.text.replaceAll(RegExp(r"\s+"), ''));
     });
 
     // star, fork
     document
-      .getElementsByClassName('Link--muted d-inline-block mr-3')
-      .forEachIndexed((index, dom.Element element) {
-        if(index%2 == 0){
-          starList.add(element.text.replaceAll(RegExp(r"\s+"), ''));
-        } else {
-          forkList.add(element.text.replaceAll(RegExp(r"\s+"), ''));
-        }
-      });
-
-
-
-
-    setState(() {
-      for (var i=0; i<userNameList.length; i++){
-        trendData.add(Trend(
-          userName: userNameList[i],
-          repoName: repoNameList[i],
-          url: urlList[i],
-          language: languageList[i],
-          star: starList[i],
-          fork: forkList[i]
-        ));
+        .getElementsByClassName('Link--muted d-inline-block mr-3')
+        .forEachIndexed((index, dom.Element element) {
+      if (index % 2 == 0) {
+        starList.add(element.text.replaceAll(RegExp(r"\s+"), ''));
+      } else {
+        forkList.add(element.text.replaceAll(RegExp(r"\s+"), ''));
       }
     });
 
-
+    setState(() {
+      for (var i = 0; i < userNameList.length; i++) {
+        trendData.add(Trend(
+            userName: userNameList[i],
+            repoName: repoNameList[i],
+            url: urlList[i],
+            language: languageList[i],
+            star: starList[i],
+            fork: forkList[i]));
+      }
+    });
 
     return "success";
   }
-  
 }
