@@ -6,8 +6,8 @@ import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:trend/pages/githubDetail.dart';
 
+import './githubDetail.dart';
 import '../dataClass/trend.dart';
 
 class githubPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class githubPage extends StatefulWidget {
 class _githubPageState extends State<githubPage> {
   String result = '';
 
-  List<Trend> trendData = [];
+  List<Trend> trendData = new List.empty(growable: true);
 
   List<String> search_since = ['daily', 'weekly', 'monthly'];
   List<String> show_since = ['Today', 'This week', 'This month'];
@@ -27,7 +27,7 @@ class _githubPageState extends State<githubPage> {
   void initState() {
     super.initState();
 
-    trendData = new List.empty(growable: true);
+    trendData = [];
     getJSONData();
   }
 
@@ -54,9 +54,9 @@ class _githubPageState extends State<githubPage> {
                       Expanded(
                         child: Center(
                             child: Text(
-                          "Github Trending",
-                          style: TextStyle(fontSize: 30, color: Colors.white),
-                        )),
+                              "Github Trending",
+                              style: TextStyle(fontSize: 30, color: Colors.white),
+                            )),
                       ),
                       Container(
                           height: 100,
@@ -81,8 +81,7 @@ class _githubPageState extends State<githubPage> {
                                     setState(() {
                                       select_since = i;
 
-                                      trendData =
-                                          new List.empty(growable: true);
+
                                       getJSONData();
                                     });
                                   },
@@ -105,127 +104,127 @@ class _githubPageState extends State<githubPage> {
                     child: trendData!.length == 0
                         ? Text("준비중")
                         : ListView.builder(
-                            itemBuilder: (context, position) {
-                              return GestureDetector(
-                                child: Card(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                          padding: EdgeInsets.all(15),
-                                          height: 80,
-                                          width: 380,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Row(
+                        itemBuilder: (context, position) {
+                          return GestureDetector(
+                            child: Card(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                      padding: EdgeInsets.all(15),
+                                      height: 80,
+                                      width: 380,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 0, 30, 0),
+                                              child: Text('${position + 1}',
+                                                  style: TextStyle(
+                                                      fontSize: 18)),
+                                            ),
+                                            Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Container(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      10, 0, 30, 0),
-                                                  child: Text('${position + 1}',
-                                                      style: TextStyle(
-                                                          fontSize: 18)),
+                                                  width: 300,
+                                                  child:
+                                                  SingleChildScrollView(
+                                                    scrollDirection:
+                                                    Axis.horizontal,
+                                                    child: Text(
+                                                        '${trendData![position].userName.toString()} / ${trendData![position].repoName.toString()}',
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            color: Color
+                                                                .fromARGB(
+                                                                255,
+                                                                36,
+                                                                41,
+                                                                47))),
+                                                  ),
                                                 ),
-                                                Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      width: 300,
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        child: Text(
-                                                            '${trendData![position].userName.toString()} / ${trendData![position].repoName.toString()}',
-                                                            style: TextStyle(
-                                                                fontSize: 18,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        36,
-                                                                        41,
-                                                                        47))),
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      width: 250,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
+                                                Container(
+                                                  width: 250,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                    children: [
+                                                      Row(
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons
-                                                                      .language,
-                                                                  size: 18,
+                                                          Icon(
+                                                              Icons
+                                                                  .language,
+                                                              size: 18,
+                                                              color: Colors
+                                                                  .grey),
+                                                          Text(
+                                                              '${trendData![position].language.toString()}',
+                                                              style: TextStyle(
                                                                   color: Colors
-                                                                      .grey),
-                                                              Text(
-                                                                  '${trendData![position].language.toString()}',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .grey)),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons
-                                                                      .star_border,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .amber),
-                                                              Text(
-                                                                '${trendData![position].star.toString()}',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons
-                                                                      .share_outlined,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .blueAccent),
-                                                              Text(
-                                                                  '${trendData![position].fork.toString()}',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .grey)),
-                                                            ],
+                                                                      .grey)),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                              Icons
+                                                                  .star_border,
+                                                              size: 18,
+                                                              color: Colors
+                                                                  .amber),
+                                                          Text(
+                                                            '${trendData![position].star.toString()}',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .grey),
                                                           ),
                                                         ],
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
+                                                      Row(
+                                                        children: [
+                                                          Icon(
+                                                              Icons
+                                                                  .share_outlined,
+                                                              size: 18,
+                                                              color: Colors
+                                                                  .blueAccent),
+                                                          Text(
+                                                              '${trendData![position].fork.toString()}',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey)),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
                                               ],
                                             ),
-                                          )),
+                                          ],
+                                        ),
+                                      )),
 
-                                      // Text('${trendData![position].url.toString()}'),
-                                    ],
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => githubDetail(
-                                              trend: trendData![position])));
-                                },
-                              );
+                                  // Text('${trendData![position].url.toString()}'),
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => githubDetail(
+                                          trend: trendData![position])));
                             },
-                            itemCount: 20),
+                          );
+                        },
+                        itemCount: trendData!.length),
                   ),
                 ),
               )
@@ -245,6 +244,8 @@ class _githubPageState extends State<githubPage> {
     List<String> starList = [];
     List<String> forkList = [];
 
+    trendData.clear();
+
     // userName, repoName, url
     document
         .getElementsByClassName('h3 lh-condensed')
@@ -252,7 +253,7 @@ class _githubPageState extends State<githubPage> {
       String userName_repoName = element.text.replaceAll(RegExp(r"\s+"), '');
 
       List<String> userName_repoName_list =
-          userName_repoName.split('/').toList();
+      userName_repoName.split('/').toList();
 
       userNameList.add(userName_repoName_list[0]);
       repoNameList.add(userName_repoName_list[1]);

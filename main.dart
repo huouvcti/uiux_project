@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'pages/githubPage.dart';
+
+
+import './pages/newsPage.dart';
+import '/pages/githubPage.dart';
 
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 
@@ -46,18 +49,10 @@ class _MyHomePageState extends State<MyHomePage>
         children: <Widget>[
           Text(''),
           githubPage(),
-          Text(''),
+          newsPage(),
         ],
       ),
 
-      // TabBarView(
-      //   children: <Widget>[
-      //     Text(''),
-      //     githubPage(),
-      //     Text(''),
-      //   ],
-      //   controller: controller,
-      // ),
 
       bottomNavigationBar: MotionTabBar(
         labels: const ["Home", "Trend", "News"],
