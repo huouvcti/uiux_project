@@ -5,8 +5,9 @@ class Trend {
   String? language;
   String? star;
   String? fork;
-
+  
   String? url;
+
 
   Trend({
     required this.userName,
