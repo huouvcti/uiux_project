@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../dataClass/trend.dart';
+
+
+
+
+
 
 class githubDetail extends StatefulWidget {
   Trend trend;
@@ -14,9 +20,15 @@ class githubDetail extends StatefulWidget {
 }
 
 class _githubDetail extends State<githubDetail> {
+  final String gptAPIKey = dotenv.env['gptAPIkey']!;
+  final String youtubeAPIkey = dotenv.env['youtubeAPIkey']!;
+
   String repoDes = "";
 
   String repo = "";
+
+
+  List<String> youtube_id_list = [];
   
 
   @override
@@ -26,6 +38,7 @@ class _githubDetail extends State<githubDetail> {
     repo = '${widget.trend.userName.toString()} / ${widget.trend.repoName.toString()}';
 
     ChatGPTRequest(repo);
+    youtubeRequest(repo);
   }
 
   @override
@@ -66,7 +79,6 @@ class _githubDetail extends State<githubDetail> {
               ),
               
 
-
               Card(
                 margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: Container(
@@ -98,9 +110,69 @@ class _githubDetail extends State<githubDetail> {
                   ),
                 ),
               ),
+              
+              Expanded(
+                child: Card(
+                  margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
 
+                  child: Column(
+                    children: [
+                      Container(
+                        
+                        height: 60,
+                        padding: EdgeInsets.all(20),
+                        child: Image.asset('assets/images/youtube-icon.png', fit: BoxFit.contain,),
+                      ),
+
+
+                      Expanded(
+                        child:
+                      Center(
+                        child: (youtube_id_list!.length == 0)
+                        ? Text("준비중")
+                        : ListView.builder(
+                          itemCount: youtube_id_list.length,
+
+                          itemBuilder:(context, position) {
+                            return Container(
+                            margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+
+                              child: YoutubePlayer(
+                                controller: YoutubePlayerController(
+                                  initialVideoId: youtube_id_list[position],
+                                  flags: YoutubePlayerFlags(
+                                      autoPlay: true,
+                                      mute: false,
+                                  ),
+                                ),
+                                bottomActions: [
+                                  CurrentPosition(),
+                                  ProgressBar(isExpanded: true),
+                                  RemainingDuration(),
+                                ],
+                              )
+                            );
+                          }
+                        )
+                      ),
+                      )
+                    ],
+                  )
+                )
+                
+                
+                
+                
               
+              )
               
+                
+              
+
+
+
+
+
             ],
           )
           
@@ -122,7 +194,7 @@ class _githubDetail extends State<githubDetail> {
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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'
+        'Authorization': 'Bearer $gptAPIKey'
       },
       body: jsonEncode({
         "messages": [
@@ -139,15 +211,10 @@ class _githubDetail extends State<githubDetail> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
-      // final output = responseData['output'];
-      
-      // String res =  responseData.choices[0].message.content.toString();
 
       setState(() {
         repoDes = responseData['choices'][0]['message']['content'];
       });
-
-      
       print(responseData['choices'][0]['message']['content']);
 
       
@@ -155,6 +222,38 @@ class _githubDetail extends State<githubDetail> {
       throw Exception('Failed to communicate with ChatGPT API');
     }
 
+
+    return "success";
+  }
+
+
+  Future<String> youtubeRequest(String input) async {
+    final apiUrl = 'https://www.googleapis.com/youtube/v3/search';
+
+    String params = '?part=id&q=$input&key=$youtubeAPIkey';
+
+    final response = await http.get(
+      Uri.parse(apiUrl + params),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = jsonDecode(utf8.decode(response.bodyBytes));
+
+      // print(responseData['items']);
+
+
+      setState(() {
+        for(var i=0; i<responseData['items'].length; i++){
+          String videoId = responseData['items'][i]['id']['videoId'];
+
+          youtube_id_list.add(videoId);
+        }
+        print(youtube_id_list);
+      });
+
+    } else {
+      throw Exception('Failed to communicate with youtube API');
+    }
 
     return "success";
   }

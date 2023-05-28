@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-
+import './pages/homePage.dart';
 import './pages/newsPage.dart';
 import '/pages/githubPage.dart';
 
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: "assets/config/.env");
+  
   runApp(MyApp());
 }
 
@@ -35,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     // controller = TabController(length: 3, vsync: this);
 
-    _tabController = TabController(initialIndex: 1, length: 3, vsync: this);
+    _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
   }
 
   @override
@@ -47,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          Text(''),
+          homePage(),
           githubPage(),
           newsPage(),
         ],
